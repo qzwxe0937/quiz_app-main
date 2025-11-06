@@ -123,8 +123,9 @@ function generatePool() {
   if (wrongOnly) {
     questions.forEach((q, idx) => {
       const rec = record[q.text];
-      // 只處理已作答且答錯過的題目
-      if (rec && rec.answered && rec.wrongTimes && rec.wrongTimes > 0) {
+      // 只處理最近一次答錯的題目（result === false）
+      // 如果答對了，就不再出現在錯題池中
+      if (rec && rec.answered && rec.result === false) {
         wrong.push({ index: idx, rec });
       }
     });
