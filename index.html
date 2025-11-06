@@ -131,6 +131,21 @@ function generatePool() {
     }
   });
 
+  // 如果開啟僅重練錯題模式，只顯示錯題
+  if (wrongOnly) {
+    if (wrong.length === 0) {
+      questionPool = [];
+      return;
+    }
+    const baseArr = wrong.map(q => (q.rec.wrongTimes / q.rec.answered) + 0.05);
+    const sum = baseArr.reduce((a,b)=>a+b,0);
+    questionPool = wrong.map((q,idx) => ({
+      index: q.index,
+      weight: baseArr[idx] / sum
+    }));
+    return;
+  }
+
   // 優先出現沒作答過的題目
   if (newIds.length > 0) {
     questionPool = newIds.map(i => ({ index: i, weight: 1 }));
@@ -163,10 +178,6 @@ function generatePool() {
     correct.forEach((q,idx)=>{
       questionPool.push({ index: q.index, weight: P2 * baseArr[idx] / sum });
     });
-  }
-
-  if (wrongOnly) {
-    questionPool = questionPool.filter(q => wrong.some(w => w.index === q.index));
   }
 }
 
