@@ -285,6 +285,11 @@ function submitAnswer() {
 
   updateStats();
   generatePool();
+  
+  // 如果在仅重练错题模式下答对了，立即从题目池中移除当前题目
+  if (wrongOnly && result) {
+    questionPool = questionPool.filter(q => q.index !== currentIndex);
+  }
 }
 
 function nextQuestion() {
