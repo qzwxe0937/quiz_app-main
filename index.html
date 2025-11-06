@@ -113,9 +113,38 @@ function shuffle(array) {
 }
 
 function generatePool() {
-   const record = JSON.parse(localStorage.getItem("quizRecords") || "{}");
-  const newIds = [];
+  // 先清空题目池，确保重新生成
+  questionPool = [];
+  
+  const record = JSON.parse(localStorage.getItem("quizRecords") || "{}");
   const wrong = [];
+
+  // 如果開啟僅重練錯題模式，只處理錯題
+  if (wrongOnly) {
+    questions.forEach((q, idx) => {
+      const rec = record[q.text];
+      // 只處理已作答且答錯過的題目
+      if (rec && rec.answered && rec.wrongTimes && rec.wrongTimes > 0) {
+        wrong.push({ index: idx, rec });
+      }
+    });
+    
+    if (wrong.length === 0) {
+      questionPool = [];
+      return;
+    }
+    
+    const baseArr = wrong.map(q => (q.rec.wrongTimes / q.rec.answered) + 0.05);
+    const sum = baseArr.reduce((a,b)=>a+b,0);
+    questionPool = wrong.map((q,idx) => ({
+      index: q.index,
+      weight: baseArr[idx] / sum
+    }));
+    return;
+  }
+
+  // 正常模式：處理所有題目
+  const newIds = [];
   const correct = [];
 
   questions.forEach((q, idx) => {
@@ -130,21 +159,6 @@ function generatePool() {
       correct.push({ index: idx, rec });
     }
   });
-
-  // 如果開啟僅重練錯題模式，只顯示錯題
-  if (wrongOnly) {
-    if (wrong.length === 0) {
-      questionPool = [];
-      return;
-    }
-    const baseArr = wrong.map(q => (q.rec.wrongTimes / q.rec.answered) + 0.05);
-    const sum = baseArr.reduce((a,b)=>a+b,0);
-    questionPool = wrong.map((q,idx) => ({
-      index: q.index,
-      weight: baseArr[idx] / sum
-    }));
-    return;
-  }
 
   // 優先出現沒作答過的題目
   if (newIds.length > 0) {
