@@ -5245,13 +5245,6 @@
   },
   {
     "type": "其他",
-    "text": "題目",
-    "options": {},
-    "answer": "答案",
-    "explanation": ""
-  },
-  {
-    "type": "其他",
     "text": "46.用戶端從DHCP伺服器端取得IP位址以及相關網路設定的過程，可以說分為四個主要的步驟，請依照順序列出步驟。   1",
     "options": {},
     "answer": "Discovery、Offer、Request、Acknowledge",
